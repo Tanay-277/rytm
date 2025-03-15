@@ -1,10 +1,10 @@
-import ThemeToggle from "@/components/blocks/themeToggle";
+import Appbar from "@/components/blocks/Appbar";
+import { SessionProvider } from "next-auth/react";
+
 export default function Home() {
   return (
-    <div>
-      <h1>Hello, World!</h1>
-      <h1 className="text-3xl">Whats your why</h1>
-      <ThemeToggle />
-    </div>
+    <main>
+      <Appbar />
+    </main>
   );
 }
