@@ -1,27 +1,37 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Providers from "./providers";
+import localFont from "next/font/local";
 
 export const metadata: Metadata = {
-  title: "RYTM",
-  description: "Collaborative music streaming",
+	title: "RYTM",
+	description: "Collaborative music streaming",
 };
 
+const GeneralSans = localFont({
+	src: [
+		{ path: "fonts/GeneralSans/GeneralSans-Variable.woff2", style: "normal" },
+		{
+			path: "fonts/GeneralSans/GeneralSans-VariableItalic.woff2",
+			style: "italic",
+		},
+	],
+	display: "swap",
+	preload: true,
+	variable: "--font-general-sans",
+  
+});
+
 export default function RootLayout({
-  children,
+	children,
 }: Readonly<{
-  children: React.ReactNode;
+	children: React.ReactNode;
 }>) {
-  return (
-    <html lang="en" suppressHydrationWarning>
-      <head >
-        <link href="https://api.fontshare.com/v2/css?f[]=general-sans@1,2&display=swap" rel="stylesheet" />
-      </head>
-      <body>
-        <Providers>
-          {children}
-        </Providers>
-      </body>
-    </html>
-  );
+	return (
+		<html lang="en" suppressHydrationWarning>
+			<body className={GeneralSans.variable}>
+				<Providers>{children}</Providers>
+			</body>
+		</html>
+	);
 }
