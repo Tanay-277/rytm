@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { Button } from "../ui/button";
 import ThemeToggle from "./themeToggle";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence } from "framer-motion";
 import { signIn, signOut, useSession } from "next-auth/react";
 import {
 	DropdownMenu,
@@ -20,10 +20,6 @@ interface User {
 	name?: string;
 	email?: string;
 	image?: string;
-}
-
-interface Session {
-	user?: User;
 }
 
 const Appbar: React.FC = () => {
@@ -62,22 +58,60 @@ const Appbar: React.FC = () => {
 				}
 			)}
 		>
-			<div className="container mx-auto flex items-center justify-between px-4">
+			<div className="container mx-auto items-center justify-between px-4 flex">
 				<Link href="/" className="font-bold text-xl tracking-tight">
 					rytm<span className="text-primary">.</span>
 				</Link>
 
-				<nav className="hidden md:flex items-center gap-8">
-					{["Home", "About", "Contact"].map((item) => (
-						<Link
-							key={item}
-							href={item === "Home" ? "/" : `/${item.toLowerCase()}`}
-							className="text-foreground/80 hover:text-primary transition-colors duration-200 text-sm font-medium relative group"
-						>
-							{item}
-							<span className="absolute -bottom-1 rounded-full left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
-						</Link>
-					))}
+				<nav className="mobileNav items-center gap-8">
+					<ul className="md:flex items-center gap-8 relative">
+						<motion.div
+							className="absolute h-8 rounded-full bg-primary/10 -z-10"
+							layoutId="navBubble"
+							id="bubble"
+							initial={{ opacity: 0, width: 0 }}
+							animate={{ opacity: 1 }}
+							transition={{
+								type: "spring",
+								bounce: 0.2,
+								duration: 0.6,
+							}}
+						/>
+						{["Home", "About", "Contact"].map((item) => (
+							<Link
+								key={item}
+								href={item === "Home" ? "/" : `/${item.toLowerCase()}`}
+								className={cn(
+									"80 hover:text-primary transition-colors duration-200 text-sm font-medium relative px-4 py-1.5 rounded-full"
+								)}
+								onMouseEnter={(e) => {
+									const target = e.currentTarget;
+									const bubble = document.querySelector(
+										"#bubble"
+									) as HTMLElement;
+
+									if (bubble) {
+										bubble.animate(
+											[
+												{},
+												{
+													width: `${target.offsetWidth}px`,
+													transform: `translateX(${target.offsetLeft}px)`,
+												},
+											],
+											{
+												duration: 600,
+												fill: "forwards",
+												easing: "cubic-bezier(0.2, 0, 0.2, 1)",
+											}
+										);
+									}
+								}}
+							>
+								{item}
+							</Link>
+						))}
+					</ul>
 					<div className="flex items-center gap-3">
 						<ThemeToggle />
 						{isAuthenticated ? (
@@ -118,8 +152,9 @@ const Appbar: React.FC = () => {
 							</DropdownMenu>
 						) : (
 							<Button
-								className="bg-primary hover:bg-primary/90 px-5 rounded-full transition-transform cursor-pointer active:scale-95"
+								className=" px-5 rounded-full transition-transform cursor-pointer active:scale-95"
 								onClick={() => signIn()}
+								variant={"tertiary"}
 							>
 								Sign In
 							</Button>
@@ -161,7 +196,7 @@ const Appbar: React.FC = () => {
 							exit={{ opacity: 0, y: -20 }}
 							transition={{ duration: 0.3 }}
 							layout
-							className="absolute top-full left-0 right-0 bg-background border-t border-border shadow-lg md:hidden py-3 rounded-b-lg"
+							className="absolute top-full left-0 right-0 bg-background/20 border-t border-border shadow-lg md:hidden py-3 rounded-b-lg"
 						>
 							<div className="flex flex-col">
 								{["Home", "About", "Contact"].map((item) => (
@@ -204,11 +239,12 @@ const Appbar: React.FC = () => {
 									</>
 								) : (
 									<Button
-										className="mx-6 my-3 bg-primary hover:bg-primary/90 rounded-full"
+										className="mx-6 my-3 rounded-full"
 										onClick={() => {
 											setMobileMenuOpen(false);
 											signIn();
 										}}
+										variant={"tertiary"}
 									>
 										Sign In
 									</Button>

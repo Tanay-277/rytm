@@ -19,7 +19,12 @@ const GeneralSans = localFont({
 	display: "swap",
 	preload: true,
 	variable: "--font-general-sans",
-  
+});
+
+const JetbrainsMono = localFont({
+	src: "/fonts/JetbrainsMono/JetBrainsMonoVariable.woff2",
+	display: "swap",
+	variable: "--font-jetbrains-mono",
 });
 
 export default function RootLayout({
@@ -29,7 +34,7 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en" suppressHydrationWarning>
-			<body className={GeneralSans.variable}>
+			<body className={`${GeneralSans.variable} ${JetbrainsMono.variable}`}>
 				<Providers>{children}</Providers>
 			</body>
 		</html>
