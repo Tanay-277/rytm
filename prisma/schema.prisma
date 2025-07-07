@@ -8,23 +8,30 @@ datasource db {
 }
 
 model User {
-  id       String    @id @default(uuid())
-  email    String    @unique
-  provider Provider
-  username String    @unique
-  role     Role
-  UpVotes  UpVotes[]
-  Stream   Stream[]
+  id        String    @id @default(uuid())
+  email     String    @unique
+  provider  Provider
+  username  String    @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  UpVotes   UpVotes[]
+  Stream    Stream[]
 }
 
 model Stream {
-  id      String     @id @default(uuid())
-  title   String
-  type    StreamType
-  active  Boolean    @default(false)
-  UpVotes UpVotes[]
-  user    User       @relation(fields: [userId], references: [id])
-  userId  String
+  id          String     @id @default(uuid())
+  title       String
+  thumbnail   String
+  cover       String
+  type        StreamType
+  url         String
+  extractedId String
+  active      Boolean    @default(false)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  UpVotes     UpVotes[]
+  user        User       @relation(fields: [userId], references: [id])
+  userId      String
 }
 
 model UpVotes {
@@ -33,6 +40,8 @@ model UpVotes {
   userId   String
   stream   Stream @relation(fields: [streamId], references: [id])
   streamId String
+
+  @@unique([userId, streamId])
 }
 
 enum StreamType {
