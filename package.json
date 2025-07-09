@@ -33,6 +33,7 @@
     "tailwindcss-animate": "^1.0.7",
     "youtube-search-api": "^2.0.0",
     "youtube-sr": "^4.3.12",
+    "ytmusic-api": "^5.3.0",
     "zod": "^3.25.75"
   },
   "devDependencies": {
@@ -47,5 +48,9 @@
     "tailwindcss": "^4.1.11",
     "tsx": "^4.19.3",
     "typescript": "^5"
-  }
+  },
+  "trustedDependencies": [
+    "@biomejs/biome",
+    "@tailwindcss/oxide"
+  ]
 }

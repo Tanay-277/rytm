@@ -20,8 +20,12 @@ const handler = NextAuth({
 				return false;
 			}
 			try {
-				await prisma.user.create({
-					data: {
+				await prisma.user.upsert({
+					where: { email: params.user.email },
+					update: {
+						provider: "GOOGLE",
+					},
+					create: {
 						email: params.user.email,
 						provider: "GOOGLE",
 						username: params.user.name,

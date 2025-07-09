@@ -22,7 +22,7 @@ model Stream {
   id          String     @id @default(uuid())
   title       String
   thumbnail   String
-  cover       String
+    cover       String
   type        StreamType
   url         String
   extractedId String
@@ -47,6 +47,7 @@ model UpVotes {
 enum StreamType {
   Spotify
   Youtube
+  Youtube_Music
 }
 
 enum Role {

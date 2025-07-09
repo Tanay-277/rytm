@@ -1,17 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
-import { YouTube, type Video } from "youtube-sr";
-//@ts-ignore
-import youtubesearchapi from "youtube-search-api";
-
-const YT_REGEX = new RegExp(
-    "(?:https?:\\/\\/)?(?:www\\.)?(?:youtube\\.com|music\\.youtube\\.com)\\/watch\\?v=([\\w\\-]{11})|(?:https?:\\/\\/)?(?:www\\.)?youtu\\.be\\/([\\w\\-]{11})"
-);
-
-const SPOT_REGEX = new RegExp(
-    "(?:https?://)?open.spotify.com/(track|album|playlist)/([\\w]+)"
-);
+import { detectMedia, getMediaDetails } from "@/lib/helpers";
 
 const CreateStreamSchema = z.object({
     title: z
@@ -28,47 +18,28 @@ const CreateStreamSchema = z.object({
 export async function POST(req: NextRequest) {
     try {
         const data = CreateStreamSchema.parse(await req.json());
-        const isYT = YT_REGEX.test(data.url);
-        let extractedId;
+        const { type } = detectMedia(data.url)
+        const mediaDetails = await getMediaDetails(data.url)
+        // console.log(mediaDetails);
 
-        if (isYT) {
-            const match = data.url.match(YT_REGEX);
-            extractedId = match ? match[1] || match[2] : null;
-        } else {
-            const isSpot = SPOT_REGEX.test(data.url);
-            if (!isSpot) {
-                return NextResponse.json(
-                    { message: "Enter a valid URL" },
-                    { status: 411 }
-                );
-            }
-            const match = data.url.match(SPOT_REGEX);
-            extractedId = match ? match[2] : null;
-        }
-
-        if (!extractedId) {
-            return NextResponse.json(
-                { message: "Could not extract valid ID from URL" },
-                { status: 411 }
-            );
-        }
-
-        const media: Video = await YouTube.getVideo(data.url)
-        console.log(media);
-
-        // console.log(JSON.stringify(media));
+        if (!mediaDetails)
+            return NextResponse.json({
+                message: "Error retrieving details."
+            }, {
+                status: 403
+            })
 
         const stream = await prisma.stream.create({
             data: {
-                title: data.title,
+                title: mediaDetails.title ?? "",
                 userId: data.creatorId,
-                type: isYT ? "Youtube" : "Spotify",
-                extractedId,
+                type,
+                extractedId: mediaDetails.id,
                 url: data.url,
+                thumbnail: mediaDetails.thumbnail ?? "",
+                cover: mediaDetails.cover ?? ""
             },
         });
-
-
 
         return NextResponse.json(
             { message: "Stream created successfully", stream },

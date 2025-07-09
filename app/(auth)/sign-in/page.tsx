@@ -145,7 +145,7 @@ const page = async () => {
 					</div>
 				</div>
 			</div>
-		</main>
+		</main>	
 	);
 };
 

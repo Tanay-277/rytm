@@ -116,7 +116,7 @@
 		@apply border-border outline-ring/50;
 	}
 	body {
-		@apply grainy bg-background text-foreground font-sans antialiased transition-colors duration-300;
+		@apply grainy bg-background text-foreground font-sans antialiased transition-colors duration-300 font-medium;
 	}
 }
 
@@ -146,4 +146,30 @@
 
 .mobileNav {
 	@apply hidden md:flex;
+}
+
+@utility accentBtn {
+	@apply h-10 px-6 has-[>svg]:px-4 grainy dark:bg-primary-foreground dark:hover:bg-input/30  bg-input text-foreground hover:bg-primary-foreground/50 border dark:border-input border-foreground/10 inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full text-sm font-medium transition-all ease-linear duration-200 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive cursor-pointer;
+}
+
+.themeBtn {
+	div {
+		@apply h-9 flex gap-2 items-center px-4;
+
+		svg {
+			@apply size-5;
+		}
+	}
+}
+
+.themeList {
+	@apply absolute top-0 left-0 bg-muted-foreground/5 w-32 rounded-xl;
+
+	li {
+		@apply flex gap-2 h-10 items-center justify-center text-sm transition-all duration-200 cursor-pointer ;
+
+		svg {
+			@apply size-4;
+		}
+	}
 }

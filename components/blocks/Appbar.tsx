@@ -3,8 +3,8 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { Button } from "../ui/button";
-import ThemeToggle from "./themeToggle";
 import { motion, AnimatePresence } from "framer-motion";
+import { ThemeToggle } from "./themeToggle";
 import { signIn, signOut, useSession } from "next-auth/react";
 import {
 	DropdownMenu,
@@ -15,6 +15,7 @@ import {
 } from "../ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { cn } from "@/lib/utils";
+import { usePathname } from "next/navigation";
 
 interface User {
 	name?: string;
@@ -25,6 +26,7 @@ interface User {
 const Appbar: React.FC = () => {
 	const [scrolled, setScrolled] = useState(false);
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+	const page = usePathname();
 
 	const { data: session, status } = useSession();
 	const isAuthenticated = status === "authenticated";
@@ -64,54 +66,56 @@ const Appbar: React.FC = () => {
 				</Link>
 
 				<nav className="mobileNav items-center gap-8">
-					<ul className="md:flex items-center gap-8 relative">
-						<motion.div
-							className="absolute h-8 rounded-full bg-primary/10 -z-10"
-							layoutId="navBubble"
-							id="bubble"
-							initial={{ opacity: 0, width: 0 }}
-							animate={{ opacity: 1 }}
-							transition={{
-								type: "spring",
-								bounce: 0.2,
-								duration: 0.6,
-							}}
-						/>
-						{["Home", "About", "Contact"].map((item) => (
-							<Link
-								key={item}
-								href={item === "Home" ? "/" : `/${item.toLowerCase()}`}
-								className={cn(
-									"80 hover:text-primary transition-colors duration-200 text-sm font-medium relative px-4 py-1.5 rounded-full"
-								)}
-								onMouseEnter={(e) => {
-									const target = e.currentTarget;
-									const bubble = document.querySelector(
-										"#bubble"
-									) as HTMLElement;
-
-									if (bubble) {
-										bubble.animate(
-											[
-												{},
-												{
-													width: `${target.offsetWidth}px`,
-													transform: `translateX(${target.offsetLeft}px)`,
-												},
-											],
-											{
-												duration: 600,
-												fill: "forwards",
-												easing: "cubic-bezier(0.2, 0, 0.2, 1)",
-											}
-										);
-									}
+					{page === "home" && (
+						<ul className="md:flex items-center gap-8 relative">
+							<motion.div
+								className="absolute h-8 rounded-full bg-primary/10 -z-10"
+								layoutId="navBubble"
+								id="bubble"
+								initial={{ opacity: 0, width: 0 }}
+								animate={{ opacity: 1 }}
+								transition={{
+									type: "spring",
+									bounce: 0.2,
+									duration: 0.6,
 								}}
-							>
-								{item}
-							</Link>
-						))}
-					</ul>
+							/>
+							{["Home", "About", "Contact"].map((item) => (
+								<Link
+									key={item}
+									href={item === "Home" ? "/" : `/${item.toLowerCase()}`}
+									className={cn(
+										"80 hover:text-primary transition-colors duration-200 text-sm font-medium relative px-4 py-1.5 rounded-full"
+									)}
+									onMouseEnter={(e) => {
+										const target = e.currentTarget;
+										const bubble = document.querySelector(
+											"#bubble"
+										) as HTMLElement;
+
+										if (bubble) {
+											bubble.animate(
+												[
+													{},
+													{
+														width: `${target.offsetWidth}px`,
+														transform: `translateX(${target.offsetLeft}px)`,
+													},
+												],
+												{
+													duration: 600,
+													fill: "forwards",
+													easing: "cubic-bezier(0.2, 0, 0.2, 1)",
+												}
+											);
+										}
+									}}
+								>
+									{item}
+								</Link>
+							))}
+						</ul>
+					)}
 					<div className="flex items-center gap-3">
 						<ThemeToggle />
 						{isAuthenticated ? (
@@ -196,19 +200,20 @@ const Appbar: React.FC = () => {
 							exit={{ opacity: 0, y: -20 }}
 							transition={{ duration: 0.3 }}
 							layout
-							className="absolute top-full left-0 right-0 bg-background/20 border-t border-border shadow-lg md:hidden py-3 rounded-b-lg"
+							className="absolute top-full left-0 right-0 bg-background/50 border-t border-border shadow-lg md:hidden py-3 rounded-b-lg backdrop-blur-lg"
 						>
 							<div className="flex flex-col">
-								{["Home", "About", "Contact"].map((item) => (
-									<Link
-										key={item}
-										href={item === "Home" ? "/" : `/${item.toLowerCase()}`}
-										className="px-6 py-3 text-foreground/80 hover:text-primary hover:bg-muted/50 transition-colors"
-										onClick={() => setMobileMenuOpen(false)}
-									>
-										{item}
-									</Link>
-								))}
+								{page !== "Home" &&
+									["Home", "About", "Contact"].map((item) => (
+										<Link
+											key={item}
+											href={item === "Home" ? "/" : `/${item.toLowerCase()}`}
+											className="px-6 py-3 text-foreground/80 hover:text-primary hover:bg-muted/50 transition-colors"
+											onClick={() => setMobileMenuOpen(false)}
+										>
+											{item}
+										</Link>
+									))}
 
 								{isAuthenticated ? (
 									<>
@@ -228,7 +233,7 @@ const Appbar: React.FC = () => {
 										</Link>
 										<Button
 											variant="ghost"
-											className="mx-6 my-3 text-destructive hover:text-destructive justify-start px-0"
+											className="mx-6 text-destructive hover:text-destructive justify-start px-0"
 											onClick={() => {
 												setMobileMenuOpen(false);
 												signOut();
