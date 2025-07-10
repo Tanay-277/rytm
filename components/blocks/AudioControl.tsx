@@ -1,51 +1,167 @@
 "use client";
 
-import { MoveLeftIcon, Volume, Volume2 } from "lucide-react";
+import {
+	MoveLeftIcon,
+	Volume,
+	Volume1,
+	Volume2,
+	VolumeOff,
+} from "lucide-react";
 import { Button } from "../ui/button";
-import { animate, motion, useAnimate } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { Slider } from "../ui/slider";
-import { Dispatch, SetStateAction, useState, useRef } from "react";
+import {
+	Dispatch,
+	SetStateAction,
+	useState,
+	useRef,
+	useCallback,
+	memo,
+	useEffect,
+} from "react";
+import { cn } from "@/lib/utils";
 
-export default function AudioControl({
-	volume,
-	setVolume,
-}: {
+type VolumeLevel = "mute" | "low" | "medium" | "high";
+
+interface VolumeOption {
+	icon: React.ReactNode;
+	label: VolumeLevel;
+	value: number[];
+	ariaLabel: string;
+}
+
+const volumeOptions: VolumeOption[] = [
+	{
+		icon: <VolumeOff aria-hidden="true" />,
+		label: "mute",
+		value: [0],
+		ariaLabel: "Volume muted",
+	},
+	{
+		icon: <Volume aria-hidden="true" />,
+		label: "low",
+		value: [30],
+		ariaLabel: "Volume low",
+	},
+	{
+		icon: <Volume1 aria-hidden="true" />,
+		label: "medium",
+		value: [60],
+		ariaLabel: "Volume medium",
+	},
+	{
+		icon: <Volume2 aria-hidden="true" />,
+		label: "high",
+		value: [100],
+		ariaLabel: "Volume high",
+	},
+];
+
+interface AudioControlProps {
 	volume: number[];
 	setVolume: Dispatch<SetStateAction<number[]>>;
-}) {
-	const [showVolume, setShowVolume] = useState(true);
-	const [volumeSlider, animate] = useAnimate();
+	className?: string;
+	initialVolume?: number;
+}
 
-	const handleVolume = () => {
-		console.log("handling volume");
-		animate(
-			volumeSlider.current,
-			{ display: "flex", opacity: 1 },
-			{ duration: 0.8, delay: 0.6 }
-		);
-	};
+function AudioControl({
+	volume,
+	setVolume,
+	className,
+	initialVolume = 50,
+}: AudioControlProps) {
+	const sliderRef = useRef<HTMLDivElement>(null);
+	const lastVolumeRef = useRef<number[]>([initialVolume]);
+	const [isVisible, setIsVisible] = useState(false);
+
+	useEffect(() => {
+		if (volume[0] > 0) {
+			lastVolumeRef.current = [...volume];
+		}
+	}, [volume]);
+
+	const getCurrentVolumeState = useCallback(() => {
+		const level = volume[0];
+		const index = level === 0 ? 0 : level <= 30 ? 1 : level <= 60 ? 2 : 3;
+		return volumeOptions[index];
+	}, [volume]);
+
+	const currentVolumeState = getCurrentVolumeState();
+
+	const handleVolumeChange = useCallback(
+		(newVolume: number[]) => {
+			if (newVolume[0] !== volume[0]) {
+				setVolume(newVolume);
+			}
+		},
+		[setVolume, volume]
+	);
+
+	const toggleMute = useCallback(() => {
+		if (volume[0] > 0) {
+			lastVolumeRef.current = [...volume];
+			setVolume([0]);
+		} else {
+			setVolume(
+				lastVolumeRef.current[0] > 0 ? lastVolumeRef.current : [initialVolume]
+			);
+		}
+	}, [volume, setVolume, initialVolume]);
 
 	return (
 		<motion.div
-			className="accentBtn justify-start gap-4 hover:none"
+			className={cn(
+				"accentBtn justify-start gap-3 hover:dark:bg-primary-foreground hover:bg-input cursor-default",
+				className
+			)}
 			whileHover={{
-				width: "226px",
+				width: "234px",
 			}}
-			transition={{ ease: "easeInOut", duration: 0.6 }}
-			onMouseOver={handleVolume}
+			transition={{ ease: "easeOut", duration: 0.4 }}
+			aria-label={`Volume control: ${currentVolumeState.ariaLabel}`}
+			role="group"
+			onMouseEnter={() => setIsVisible(true)}
+			onMouseLeave={() => setIsVisible(false)}
 		>
-			{volume}
-			<Volume2 />
-			<Slider
-				defaultValue={volume}
-				max={100}
-				step={1}
-				onValueChange={(val) => {
-					setVolume(val);
-				}}
-				ref={volumeSlider}
-				className="hidden opacity-0"
-			/>
+			<span className="w-[2ch] text-center flex items-center shrink-0" aria-hidden="true">
+				{volume[0]}
+			</span>
+
+			<button
+				onClick={toggleMute}
+				className="cursor-pointer border-none bg-transparent flex items-center justify-center w-max"
+				aria-label={volume[0] === 0 ? "Unmute" : "Mute"}
+			>
+				{currentVolumeState.icon}
+			</button>
+
+			<AnimatePresence>
+				{isVisible && (
+					<motion.div
+						initial={{ opacity: 0 }}
+						animate={{ opacity: 1 }}
+						exit={{ opacity: 0, transition: { delay: 0 } }}
+						transition={{ duration: 0.3, ease: "linear", delay: 0.7 }}
+						className="flex-grow"
+					>
+						<Slider
+							defaultValue={volume}
+							value={volume}
+							max={100}
+							step={1}
+							onValueChange={handleVolumeChange}
+							ref={sliderRef}
+							aria-label="Adjust volume"
+							aria-valuemin={0}
+							aria-valuemax={100}
+							aria-valuenow={volume[0]}
+							className="w-full"
+						/>
+					</motion.div>
+				)}
+			</AnimatePresence>
 		</motion.div>
 	);
 }
+
+export default memo(AudioControl);

@@ -71,7 +71,6 @@ export default function BetterThemeTogle() {
 	};
 
 	const handleThemeChange = (newTheme: ThemeType) => {
-		// Clear any existing timeout to prevent multiple calls
 		if (debounceTimeoutRef.current) {
 			clearTimeout(debounceTimeoutRef.current);
 			debounceTimeoutRef.current = null;
@@ -134,7 +133,7 @@ export default function BetterThemeTogle() {
 				variant="tertiary"
 				className={cn(
 					"grainy w-32 !bg-transparent capitalize delay-0",
-					isOpen && "text-transparent !delay-500",
+					isOpen && "text-transparent !delay-300",
 					"flex items-center gap-2"
 				)}
 				onClick={handleThemeToggle}
@@ -145,7 +144,7 @@ export default function BetterThemeTogle() {
 			>
 				{currentThemeOption.icon} {currentThemeOption.label}
 			</Button>
-			<AnimatePresence>	
+			<AnimatePresence>
 				{isOpen && (
 					<motion.ul
 						className="themeList absolute left-0 w-full top-0"
