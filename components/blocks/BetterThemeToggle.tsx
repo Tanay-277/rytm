@@ -1,11 +1,7 @@
 "use client";
 import * as React from "react";
 import { useState, useEffect, useRef } from "react";
-import {
-	AudioWaveform,
-	Moon,
-	Sun,
-} from "lucide-react";
+import { AudioWaveform, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { AnimatePresence, motion } from "framer-motion";
 import { Button } from "../ui/button";
@@ -19,7 +15,7 @@ interface ThemeOption {
 	icon: React.ReactNode;
 }
 
-export default function BetterThemeToggle() {
+export default function BetterThemeTogle() {
 	const [isOpen, setIsOpen] = useState<boolean>(false);
 	const [mounted, setMounted] = useState<boolean>(false);
 	const { theme, setTheme } = useTheme();
@@ -137,7 +133,7 @@ export default function BetterThemeToggle() {
 				size="lg"
 				variant="tertiary"
 				className={cn(
-					"grainy w-32 !bg-transparent capitalize !duration-0 delay-0 ",
+					"grainy w-32 !bg-transparent capitalize delay-0",
 					isOpen && "text-transparent !delay-500",
 					"flex items-center gap-2"
 				)}
@@ -152,7 +148,7 @@ export default function BetterThemeToggle() {
 			<AnimatePresence>
 				{isOpen && (
 					<motion.ul
-						className="themeList absolute left-0 w-full "
+						className="themeList absolute left-0 w-full"
 						role="menu"
 						initial={{ opacity: 0, zIndex: -10, translateY: themeListY }}
 						animate={{ opacity: 1, zIndex: 10, translateY: themeListY }}

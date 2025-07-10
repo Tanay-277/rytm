@@ -3,11 +3,11 @@ import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { getServerSession } from "next-auth";
 
-export const VoteSchema = z.object({
-	streamId: z.string(),
-});
 
 export async function POST(req: NextRequest) {
+	const VoteSchema = z.object({
+		streamId: z.string(),
+	});
 	try {
 		const data = VoteSchema.parse(await req.json());
 		const session = await getServerSession();

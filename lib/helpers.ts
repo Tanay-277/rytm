@@ -66,6 +66,7 @@ export async function getMediaDetails(url: string): Promise<{
             const match = url.match(YT_REGEX);
             if (!match) return null;
 
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const [_, videoId, artistId, userId, handle, playlistId] = match;
 
             if (videoId) {
@@ -100,6 +101,7 @@ export async function getMediaDetails(url: string): Promise<{
             const match = url.match(YT_MUSIC_REGEX);
             if (!match) return null;
 
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const [_, videoId, watchlistId, playlistId, browseId, artistId] = match;
 
             try {
@@ -144,6 +146,7 @@ export async function getMediaDetails(url: string): Promise<{
             const match = url.match(SPOT_REGEX);
             if (!match) return null;
 
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const [_, spotifyType, id] = match;
             return {
                 type: `Spotify_${spotifyType.charAt(0).toUpperCase() + spotifyType.slice(1)}`,

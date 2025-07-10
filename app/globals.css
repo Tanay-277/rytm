@@ -1,7 +1,7 @@
 @import "tailwindcss";
 @plugin "tailwindcss-animate";
 
-/* @custom-variant dark (&:is(.dark *)); */
+@custom-variant dark (&:is(.dark *));
 
 @theme inline {
 	--color-background: var(--background);
@@ -166,7 +166,7 @@
 	@apply absolute top-0 left-0 bg-muted-foreground/5 w-32 rounded-xl;
 
 	li {
-		@apply flex gap-2 h-10 items-center justify-center text-sm transition-all duration-200 cursor-pointer ;
+		@apply flex gap-2 h-10 items-center justify-center text-sm transition-all duration-200 cursor-pointer;
 
 		svg {
 			@apply size-4;

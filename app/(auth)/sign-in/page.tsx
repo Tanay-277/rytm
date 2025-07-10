@@ -15,7 +15,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import { getProviders, signIn } from "next-auth/react";
+import { getProviders } from "next-auth/react";
 import GoogleSignInBtn from "@/components/blocks/GoogleSignInBtn";
 
 const page = async () => {

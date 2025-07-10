@@ -17,11 +17,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 
-interface User {
-	name?: string;
-	email?: string;
-	image?: string;
-}
+// interface User {
+// 	name?: string;
+// 	email?: string;
+// 	image?: string;
+// }
 
 const Appbar: React.FC = () => {
 	const [scrolled, setScrolled] = useState(false);
@@ -66,21 +66,21 @@ const Appbar: React.FC = () => {
 				</Link>
 
 				<nav className="mobileNav items-center gap-8">
-					{page === "home" && (
-						<ul className="md:flex items-center gap-8 relative">
-							<motion.div
-								className="absolute h-8 rounded-full bg-primary/10 -z-10"
-								layoutId="navBubble"
-								id="bubble"
-								initial={{ opacity: 0, width: 0 }}
-								animate={{ opacity: 1 }}
-								transition={{
-									type: "spring",
-									bounce: 0.2,
-									duration: 0.6,
-								}}
-							/>
-							{["Home", "About", "Contact"].map((item) => (
+					<ul className="md:flex items-center gap-8 relative">
+						<motion.div
+							className="absolute h-8 rounded-full bg-primary/10 -z-10"
+							layoutId="navBubble"
+							id="bubble"
+							initial={{ opacity: 0, width: 0 }}
+							animate={{ opacity: 1 }}
+							transition={{
+								type: "spring",
+								bounce: 0.2,
+								duration: 0.6,
+							}}
+						/>
+						{page !== "/home" &&
+							["Home", "About", "Contact"].map((item) => (
 								<Link
 									key={item}
 									href={item === "Home" ? "/" : `/${item.toLowerCase()}`}
@@ -114,8 +114,7 @@ const Appbar: React.FC = () => {
 									{item}
 								</Link>
 							))}
-						</ul>
-					)}
+					</ul>
 					<div className="flex items-center gap-3">
 						<ThemeToggle />
 						{isAuthenticated ? (
@@ -123,7 +122,7 @@ const Appbar: React.FC = () => {
 								<DropdownMenuTrigger asChild>
 									<Avatar className="h-9 w-9 cursor-pointer hover:opacity-80 transition-opacity">
 										<AvatarImage
-											src={session?.user?.image || ""}
+											src={"/assets/user.jpeg"} // || "session?.user?.image"}
 											alt={session?.user?.name || "User"}
 										/>
 										<AvatarFallback className="bg-primary/10 text-primary">
@@ -203,7 +202,7 @@ const Appbar: React.FC = () => {
 							className="absolute top-full left-0 right-0 bg-background/50 border-t border-border shadow-lg md:hidden py-3 rounded-b-lg backdrop-blur-lg"
 						>
 							<div className="flex flex-col">
-								{page !== "Home" &&
+								{page !== "/home" &&
 									["Home", "About", "Contact"].map((item) => (
 										<Link
 											key={item}
