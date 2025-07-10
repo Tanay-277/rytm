@@ -132,7 +132,7 @@ export default function BetterThemeToggle() {
 	};
 
 	return (
-		<div className="relative mt-28" ref={themeContainerRef}>
+		<div className="relative" ref={themeContainerRef}>
 			<Button
 				size="lg"
 				variant="tertiary"
@@ -149,10 +149,10 @@ export default function BetterThemeToggle() {
 			>
 				{currentThemeOption.icon} {currentThemeOption.label}
 			</Button>
-			<AnimatePresence>
+			<AnimatePresence>	
 				{isOpen && (
 					<motion.ul
-						className="themeList absolute left-0 w-full "
+						className="themeList absolute left-0 w-full top-0"
 						role="menu"
 						initial={{ opacity: 0, zIndex: -10, translateY: themeListY }}
 						animate={{ opacity: 1, zIndex: 10, translateY: themeListY }}
