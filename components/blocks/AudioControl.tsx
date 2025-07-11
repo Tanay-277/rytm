@@ -108,22 +108,38 @@ function AudioControl({
 		}
 	}, [volume, setVolume, initialVolume]);
 
+	const handleVolumeScroll = useCallback(
+		(e: React.WheelEvent) => {
+			const direction = Math.sign(e.deltaY);
+			const step = 5;
+			const newVolume = Math.max(
+				0,
+				Math.min(100, volume[0] - direction * step)
+			);	
+			setVolume([newVolume]);
+		},
+		[volume, setVolume]
+	);
+
 	return (
 		<motion.div
 			className={cn(
-				"accentBtn justify-start gap-3 hover:dark:bg-primary-foreground hover:bg-input cursor-default",
+				"accentBtn !bg-transparent justify-start gap-3 hover:dark:bg-primary-foreground hover:bg-input cursor-default",
 				className
 			)}
 			whileHover={{
 				width: "234px",
 			}}
-			transition={{ ease: "easeOut", duration: 0.4 }}
+			transition={{ ease: "easeOut", duration: 0.3 }}
 			aria-label={`Volume control: ${currentVolumeState.ariaLabel}`}
 			role="group"
 			onMouseEnter={() => setIsVisible(true)}
 			onMouseLeave={() => setIsVisible(false)}
 		>
-			<span className="w-[2ch] text-center flex items-center shrink-0" aria-hidden="true">
+			<span
+				className="w-[2ch] text-center flex items-center shrink-0"
+				aria-hidden="true"
+			>
 				{volume[0]}
 			</span>
 
@@ -141,7 +157,7 @@ function AudioControl({
 						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
 						exit={{ opacity: 0, transition: { delay: 0 } }}
-						transition={{ duration: 0.3, ease: "linear", delay: 0.7 }}
+						transition={{ duration: 0.3, ease: "linear", delay: 0.5 }}
 						className="flex-grow"
 					>
 						<Slider
@@ -156,6 +172,7 @@ function AudioControl({
 							aria-valuemax={100}
 							aria-valuenow={volume[0]}
 							className="w-full"
+							onWheel={(e) => handleVolumeScroll(e)}
 						/>
 					</motion.div>
 				)}
@@ -164,4 +181,4 @@ function AudioControl({
 	);
 }
 
-export default memo(AudioControl);
+export default AudioControl;
