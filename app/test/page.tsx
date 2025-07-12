@@ -11,6 +11,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Share } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
@@ -20,7 +21,7 @@ export default function Test() {
 	return (
 		<main className="flex flex-col h-screen">
 			<Appbar />
-			<section className="flex flex-col flex-1 px-6 pt-4 pb-6 overflow-hidden">
+			<section className="flex flex-col flex-1 px-6 py-4 overflow-hidden">
 				<div className="header flex items-center justify-between mb-4">
 					<div className="controls flex gap-2">
 						<AudioControl volume={volume} setVolume={setVolume} />
@@ -46,8 +47,8 @@ export default function Test() {
 				</div>
 
 				<div className="flex flex-1 gap-4 overflow-hidden">
-					<MediaQueue/>
-					<div className="w-3/4 flex flex-col">
+					<MediaQueue />
+					<div className="w-3/4 flex flex-col mb-2">
 						<div className="player relative w-full h-full rounded-xl overflow-hidden">
 							<Image
 								src="/assets/thumb/bg-1.png"
@@ -65,6 +66,14 @@ export default function Test() {
 									<div className="text-gray-300 text-sm">Spotify</div>
 								</div>
 							</div>
+						</div>
+						<div className="flex mt-2 gap-2">
+							<Input
+								placeholder="Enter new track"
+								type="text"
+								className="rounded-full h-10 z-10"
+							/>
+							<Button variant={"tertiary"}>Add</Button>
 						</div>
 					</div>
 				</div>

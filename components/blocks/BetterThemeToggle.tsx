@@ -150,7 +150,7 @@ export default function BetterThemeTogle() {
 						className="themeList absolute left-0 w-full top-0"
 						role="menu"
 						initial={{ opacity: 0, zIndex: -10, translateY: themeListY }}
-						animate={{ opacity: 1, zIndex: 10, translateY: themeListY }}
+						animate={{ opacity: 1, zIndex: 100, translateY: themeListY }}
 						exit={{ opacity: 0, zIndex: -10, translateY: themeListY }}
 						transition={{ duration: 0.4, ease: "circInOut" }}
 						onWheel={(e) => handleThemeScroll(e)}

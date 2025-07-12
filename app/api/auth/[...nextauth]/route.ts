@@ -16,7 +16,7 @@ const handler = NextAuth({
 	},
 	callbacks: {
 		async signIn(params) {
-			if (!params.user.email || !params.user.name) {
+			if (!params.user.email || !params.user.name || !params.user.image) {
 				console.log("Unauthenticated");
 				return false;
 			}
@@ -30,6 +30,7 @@ const handler = NextAuth({
 						email: params.user.email,
 						provider: "GOOGLE",
 						username: params.user.name,
+						cover: params.user.image
 					},
 				});
 				return true;

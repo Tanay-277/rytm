@@ -12,6 +12,7 @@ model User {
   email     String    @unique
   provider  Provider
   username  String    @unique
+  cover     String
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   UpVotes   UpVotes[]
@@ -22,7 +23,7 @@ model Stream {
   id          String     @id @default(uuid())
   title       String
   thumbnail   String
-    cover       String
+  cover       String
   type        StreamType
   url         String
   extractedId String
