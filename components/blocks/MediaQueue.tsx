@@ -1,7 +1,5 @@
 "use client";
 import { Button } from "../ui/button";
-import { Label } from "../ui/label";
-import { Input } from "../ui/input";
 import { ArrowUp, ArrowUpFromDot, AudioLines, UserRound } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import {
@@ -11,107 +9,76 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "../ui/select";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import api, { ApiResponse } from "@/lib/api-client";
+import { toast } from "sonner";
+import { Toaster } from "../ui/sonner";
+import { Stream, UpVotes } from "@prisma/client";
+import { useSession } from "next-auth/react";
 
-interface Track {
-	cover: string;
-	thumbnail: string;
-	title: string;
-	id: string;
-	type: string;
-	UpVotes: number;
-}
-
-const tracks: Track[] = [
-	{
-		id: "1",
-		cover: "/assets/thumb/bg-1.png",
-		thumbnail: "/assets/thumb/bg-1.png",
-		title: "Great Escape",
-		type: "youtube",
-		UpVotes: 5,
-	},
-	{
-		id: "2",
-		cover: "/assets/thumb/bg-2.png",
-		thumbnail: "/assets/thumb/bg-2.png",
-		title: "Midnight Symphony",
-		type: "spotify",
-		UpVotes: 8,
-	},
-	{
-		id: "3",
-		cover: "/assets/thumb/bg-3.png",
-		thumbnail: "/assets/thumb/bg-3.png",
-		title: "Ocean Waves",
-		type: "youtube",
-		UpVotes: 3,
-	},
-	{
-		id: "4",
-		cover: "/assets/thumb/bg-4.png",
-		thumbnail: "/assets/thumb/bg-4.png",
-		title: "Desert Dreams",
-		type: "soundcloud",
-		UpVotes: 6,
-	},
-	{
-		id: "5",
-		cover: "/assets/thumb/bg-5.png",
-		thumbnail: "/assets/thumb/bg-5.png",
-		title: "Urban Beats",
-		type: "spotify",
-		UpVotes: 10,
-	},
-	{
-		id: "6",
-		cover: "/assets/thumb/bg-6.png",
-		thumbnail: "/assets/thumb/bg-6.png",
-		title: "Mountain Echo",
-		type: "youtube",
-		UpVotes: 7,
-	},
-	{
-		id: "7",
-		cover: "/assets/thumb/bg-7.png",
-		thumbnail: "/assets/thumb/bg-7.png",
-		title: "Neon Lights",
-		type: "spotify",
-		UpVotes: 9,
-	},
-	{
-		id: "8",
-		cover: "/assets/thumb/bg-8.png",
-		thumbnail: "/assets/thumb/bg-8.png",
-		title: "Summer Vibes",
-		type: "soundcloud",
-		UpVotes: 4,
-	},
-	{
-		id: "9",
-		cover: "/assets/thumb/bg-9.png",
-		thumbnail: "/assets/thumb/bg-9.png",
-		title: "Cosmic Journey",
-		type: "youtube",
-		UpVotes: 12,
-	},
-	{
-		id: "10",
-		cover: "/assets/thumb/bg-10.png",
-		thumbnail: "/assets/thumb/bg-10.png",
-		title: "Electric Dreams",
-		type: "spotify",
-		UpVotes: 8,
-	},
-];
-
-const users = [];
+type Track = Stream & {
+	UpVotes: UpVotes[];
+};
 
 export default function MediaQueue() {
-	const [vote, setVote] = useState(false);
+	const { data: session } = useSession();
+	const userId = session?.user?.id;
+	console.log(userId);
+	
+
+	const [tracks, setTracks] = useState<Track[]>([]);
+	const [noTracks, setNoTracks] = useState<number>(0);
+
+	const getTracks = async (): Promise<
+		ApiResponse<{ streams: Track[]; totalStreams: number }>
+	> => {
+		const tracks = await api.get<{ streams: Track[]; totalStreams: number }>(
+			"/streams",
+			{
+				creatorId: "e317c06f-2e7a-493d-b98a-8b286d099147", // TODO: Replace with dynamic creator ID
+				page: "1",
+				limit: "10",
+			}
+		);
+		console.log(tracks);
+
+		return tracks;
+	};
+
+	const handleUpVote = async (trackId: string) => {
+		const vote = await api.post("/streams/upvotes", {
+			streamId: trackId,
+		});
+
+		if (vote.success) {
+			getTracks().then((resp) => {
+				if (resp.success) {
+					setTracks(resp.data.streams);
+					setNoTracks(resp.data.totalStreams);
+				}
+			});
+		} else {
+			toast.error(vote.error || "Failed to upvote");
+		}
+	};
+
+	useEffect(() => {
+		getTracks().then(
+			(resp: ApiResponse<{ streams: Track[]; totalStreams: number }>) => {
+				if (!resp.success) {
+					toast.error(resp.error || "Failed to fetch streams");
+					console.error("API Error:", resp.error);
+				} else {
+					setTracks(resp.data.streams);
+					setNoTracks(resp.data.totalStreams);
+				}
+			}
+		);
+	}, []);
 
 	return (
 		<div className="w-1/4 h-full flex flex-col bg-secondary/20 rounded-xl mb-2">
+			<Toaster />
 			<Tabs defaultValue="tracks" className="flex flex-col h-full">
 				<header className="sticky top-0 z-10 p-4 flex items-center justify-between border-b bg-muted/10 backdrop-blur-sm rounded-t-xl">
 					<span className="font-medium">Phantom Space</span>
@@ -122,7 +89,6 @@ export default function MediaQueue() {
 							</TabsTrigger>
 							<TabsTrigger value="users">
 								<UserRound className="h-4 w-4 mr-1" />
-								{/* <span className="sr-only">Users</span> */}
 							</TabsTrigger>
 						</TabsList>
 					</div>
@@ -152,7 +118,7 @@ export default function MediaQueue() {
 										<img
 											src={track.thumbnail}
 											alt={track.title}
-											className="object-cover w-full h-full"
+											className="object-contain w-full h-full"
 										/>
 									</div>
 									<div className="flex-1">
@@ -160,7 +126,7 @@ export default function MediaQueue() {
 											{track.title}
 										</h4>
 										<p className="text-xs text-muted-foreground capitalize">
-											{track.type}
+											{track.type.replace("_", " ")}
 										</p>
 									</div>
 									<div className="flex items-center text-xs bg-muted/50 rounded-md overflow-hidden w-14 border-input border">
@@ -168,11 +134,20 @@ export default function MediaQueue() {
 											size="icon"
 											variant="secondary"
 											className="size-8 p-0 hover:bg-primary/10 hover:text-primary rounded-none flex-1/2 border-none"
+											onClick={() => {
+												handleUpVote(track.id);
+											}}
+											disabled={
+												!userId ||
+												!!track.UpVotes.find(
+													(stream: UpVotes) => stream.userId === userId
+												)
+											}
 										>
 											<ArrowUp className="size-4" />
 										</Button>
 										<span className="font-medium text-center flex-1/2">
-											{track.UpVotes}
+											{track.UpVotes.length}
 										</span>
 									</div>
 								</div>

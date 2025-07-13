@@ -4,9 +4,6 @@ import { prisma } from "@/lib/db";
 import { detectMedia, getMediaDetails } from "@/lib/helpers";
 
 const CreateStreamSchema = z.object({
-    title: z
-        .string()
-        .min(3, { message: "Stream title should of of minimum 3 chars" }),
     creatorId: z.string(),
     url: z
         .string()
@@ -20,7 +17,7 @@ export async function POST(req: NextRequest) {
         const data = CreateStreamSchema.parse(await req.json());
         const { type } = detectMedia(data.url)
         const mediaDetails = await getMediaDetails(data.url)
-        // console.log(mediaDetails);
+        console.log(mediaDetails);
 
         if (!mediaDetails)
             return NextResponse.json({
@@ -92,6 +89,9 @@ export async function GET(req: NextRequest) {
                 },
                 orderBy: {
                     createdAt: 'desc',
+                },
+                include: {
+                    UpVotes: true
                 },
                 skip,
                 take: limit,

@@ -1,32 +1,18 @@
 "use client";
 
-import {
-	MoveLeftIcon,
-	Volume,
-	Volume1,
-	Volume2,
-	VolumeOff,
-} from "lucide-react";
-import { Button } from "../ui/button";
+import { Volume, Volume1, Volume2, VolumeOff } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { Slider } from "../ui/slider";
-import {
-	Dispatch,
-	SetStateAction,
-	useState,
-	useRef,
-	useCallback,
-	memo,
-	useEffect,
-} from "react";
+import { useState, useRef, useCallback, memo, useEffect } from "react";
 import { cn } from "@/lib/utils";
+import { useAudioStore } from "@/store/AudioStore";
 
 type VolumeLevel = "mute" | "low" | "medium" | "high";
 
 interface VolumeOption {
 	icon: React.ReactNode;
 	label: VolumeLevel;
-	value: number[];
+	value: [number];
 	ariaLabel: string;
 }
 
@@ -58,21 +44,15 @@ const volumeOptions: VolumeOption[] = [
 ];
 
 interface AudioControlProps {
-	volume: number[];
-	setVolume: Dispatch<SetStateAction<number[]>>;
 	className?: string;
-	initialVolume?: number;
+	initialVolume?: [number];
 }
 
-function AudioControl({
-	volume,
-	setVolume,
-	className,
-	initialVolume = 50,
-}: AudioControlProps) {
+function AudioControl({ className, initialVolume = [50] }: AudioControlProps) {
 	const sliderRef = useRef<HTMLDivElement>(null);
-	const lastVolumeRef = useRef<number[]>([initialVolume]);
+	const lastVolumeRef = useRef<[number]>(initialVolume);
 	const [isVisible, setIsVisible] = useState(false);
+	const { volume, setVolume } = useAudioStore();
 
 	useEffect(() => {
 		if (volume[0] > 0) {
@@ -89,7 +69,7 @@ function AudioControl({
 	const currentVolumeState = getCurrentVolumeState();
 
 	const handleVolumeChange = useCallback(
-		(newVolume: number[]) => {
+		(newVolume: [number]) => {
 			if (newVolume[0] !== volume[0]) {
 				setVolume(newVolume);
 			}
@@ -103,7 +83,7 @@ function AudioControl({
 			setVolume([0]);
 		} else {
 			setVolume(
-				lastVolumeRef.current[0] > 0 ? lastVolumeRef.current : [initialVolume]
+				lastVolumeRef.current[0] > 0 ? lastVolumeRef.current : initialVolume
 			);
 		}
 	}, [volume, setVolume, initialVolume]);
@@ -115,7 +95,7 @@ function AudioControl({
 			const newVolume = Math.max(
 				0,
 				Math.min(100, volume[0] - direction * step)
-			);	
+			);
 			setVolume([newVolume]);
 		},
 		[volume, setVolume]
