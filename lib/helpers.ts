@@ -59,7 +59,7 @@ export async function getMediaDetails(url: string): Promise<{
 
     const mediaType = detectMedia(url).type;
     // console.log(mediaType);
-
+    
 
     try {
         if (mediaType === "Youtube") {

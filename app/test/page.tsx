@@ -5,17 +5,11 @@ import BetterThemeToggle from "@/components/blocks/BetterThemeToggle";
 import MediaQueue from "@/components/blocks/MediaQueue";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import {
-	Card,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Share } from "lucide-react";
-import Image from "next/image";
 import { useState } from "react";
 import LiteYouTubeEmbed from "react-lite-youtube-embed";
+import { YouTubeEmbed } from "@next/third-parties/google";
 
 export default function Test() {
 	const [volume, setVolume] = useState<[number]>([45]);
@@ -60,8 +54,9 @@ export default function Test() {
 								priority
 							/> */}
 							<LiteYouTubeEmbed
-								id="LNxyQHaXMg4"
+								id="IBkT4Yww7zk"
 								title="What’s new in Material Design for the web (Chrome Dev Summit 2019)"
+								// thumbnail="/assets/thumb/bg-1.png"
 							/>
 							<div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
 								<div className="flex justify-between items-center">

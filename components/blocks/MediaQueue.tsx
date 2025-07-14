@@ -144,9 +144,9 @@ export default function MediaQueue() {
 								title={orderBy === "asc" ? "Sort Ascending" : "Sort Descending"}
 							>
 								{orderBy === "asc" ? (
-									<ArrowDownNarrowWide className="h-4 w-4" />
-								) : (
 									<ArrowUpNarrowWide className="h-4 w-4" />
+								) : (
+									<ArrowDownNarrowWide className="h-4 w-4" />
 								)}
 							</Button>
 							<Select

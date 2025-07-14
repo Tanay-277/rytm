@@ -7,7 +7,8 @@ import api, { type ApiResponse } from "@/lib/api-client";
 import { Stream, StreamType } from "@prisma/client";
 import { Toaster } from "../ui/sonner";
 import { Loader2Icon } from "lucide-react";
-import { detectMedia } from "@/lib/helpers";
+import { detectMedia, getMediaDetails } from "@/lib/helpers";
+import { AnimatePresence, motion } from "motion/react";
 
 const StreamBar = () => {
 	const [newStream, setNewStream] = useState<string>("");
@@ -52,11 +53,41 @@ const StreamBar = () => {
 			setLoading(false);
 		}
 	};
-
 	return (
 		<>
 			<Toaster />
-			<div className="flex mt-2 gap-2">
+			<div className="flex mt-2 gap-2 relative">
+				{/* <AnimatePresence>
+					{isPopVisible && Object.keys(trackDetails).length > 0 && (
+						<motion.div
+							className="popover bg-black/90 absolute -top-20 left-0 w-full p-4 rounded-md shadow-lg z-20"
+							initial={{ opacity: 0, y: 10 }}
+							animate={{ opacity: 1, y: 0 }}
+							exit={{ opacity: 0, y: 10 }}
+						>
+							<div className="flex gap-3">
+								{(trackDetails.thumbnail || trackDetails.cover) && (
+									<img
+										src={trackDetails.thumbnail || trackDetails.cover}
+										alt="Track thumbnail"
+										className="w-16 h-16 object-cover rounded"
+									/>
+								)}
+								<div className="text-white">
+									<h3 className="font-bold">
+										{trackDetails.title || "Unknown Title"}
+									</h3>
+									<p className="text-sm text-gray-300">
+										{trackDetails.type || "Unknown Type"}
+									</p>
+									<p className="text-xs text-gray-400">
+										ID: {trackDetails.id || "Unknown"}
+									</p>
+								</div>
+							</div>
+						</motion.div>
+					)}
+				</AnimatePresence> */}
 				<Input
 					placeholder="Enter new track"
 					type="text"
