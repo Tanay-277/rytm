@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { Slider } from "../ui/slider";
 import { useState, useRef, useCallback, memo, useEffect } from "react";
 import { cn } from "@/lib/utils";
-import { useAudioStore } from "@/store/AudioStore";
+import { useAudioStore } from "@/store/audioStore";
 
 type VolumeLevel = "mute" | "low" | "medium" | "high";
 

@@ -61,8 +61,10 @@ export async function GET(req: NextRequest) {
         const creatorId = req.nextUrl.searchParams.get("creatorId");
         const pageParam = req.nextUrl.searchParams.get("page") || "1";
         const limitParam = req.nextUrl.searchParams.get("limit") || "10";
+        const sortBy: "Time" | "Alphabetical" | "Votes" =
+            (req.nextUrl.searchParams.get("sortBy") as "Time" | "Alphabetical" | "Votes") || "Time";
+        const orderBy: "asc" | "desc" = (req.nextUrl.searchParams.get("orderBy") as "asc" | "desc") || "asc";
 
-        // Parse and validate pagination parameters
         const page = parseInt(pageParam, 10);
         const limit = parseInt(limitParam, 10);
 
@@ -82,14 +84,18 @@ export async function GET(req: NextRequest) {
 
         const skip = (page - 1) * limit;
 
+        const sortOption = sortBy === "Alphabetical"
+            ? { title: orderBy }
+            : sortBy === "Votes"
+                ? { UpVotes: { _count: orderBy } }
+                : { updatedAt: orderBy };
+
         const [streams, totalStreams] = await prisma.$transaction([
             prisma.stream.findMany({
                 where: {
                     userId: creatorId,
                 },
-                orderBy: {
-                    createdAt: 'desc',
-                },
+                orderBy: sortOption,
                 include: {
                     UpVotes: true
                 },

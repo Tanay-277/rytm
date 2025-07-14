@@ -43,9 +43,9 @@ export async function POST(req: NextRequest) {
 			},
 		});
 
-		if (existingVote) {
+		if (!existingVote) {
 			return NextResponse.json(
-				{ message: "You have already upvoted this stream" },
+				{ message: "You haven't upvoted this stream" },
 				{ status: 409 }
 			);
 		}

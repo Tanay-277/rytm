@@ -15,16 +15,17 @@ import { Input } from "@/components/ui/input";
 import { Share } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
+import LiteYouTubeEmbed from "react-lite-youtube-embed";
 
 export default function Test() {
-	const [volume, setVolume] = useState<number[]>([45]);
+	const [volume, setVolume] = useState<[number]>([45]);
 	return (
 		<main className="flex flex-col h-screen">
 			<Appbar />
 			<section className="flex flex-col flex-1 px-6 py-4 overflow-hidden">
 				<div className="header flex items-center justify-between mb-4">
 					<div className="controls flex gap-2">
-						<AudioControl volume={volume} setVolume={setVolume} />
+						{/* <AudioControl volume={volume} setVolume={setVolume} /> */}
 						<BetterThemeToggle />
 						<Button size={"lg"} variant={"tertiary"}>
 							<Share />
@@ -50,13 +51,17 @@ export default function Test() {
 					<MediaQueue />
 					<div className="w-3/4 flex flex-col mb-2">
 						<div className="player relative w-full h-full rounded-xl overflow-hidden">
-							<Image
+							{/* <Image
 								src="/assets/thumb/bg-1.png"
 								alt="thumbnail"
 								className="object-cover"
 								fill
 								sizes="(max-width: 768px) 100vw, (max-width: 1200px) 75vw"
 								priority
+							/> */}
+							<LiteYouTubeEmbed
+								id="LNxyQHaXMg4"
+								title="What’s new in Material Design for the web (Chrome Dev Summit 2019)"
 							/>
 							<div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
 								<div className="flex justify-between items-center">
