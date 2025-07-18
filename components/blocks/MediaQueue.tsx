@@ -4,7 +4,6 @@ import {
 	ArrowDown,
 	ArrowDownNarrowWide,
 	ArrowUp,
-	ArrowUpFromDot,
 	ArrowUpNarrowWide,
 	AudioLines,
 	UserRound,
@@ -17,7 +16,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "../ui/select";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import api, { ApiResponse } from "@/lib/api-client";
 import { toast } from "sonner";
 import { Toaster } from "../ui/sonner";
@@ -25,6 +24,7 @@ import { Stream, UpVotes } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { AnimatePresence, motion } from "motion/react";
 import { useQueueStore, SortOptions } from "@/store/queueStore";
+import Image from "next/image";
 
 type Track = Stream & {
 	UpVotes: UpVotes[];
@@ -43,20 +43,17 @@ export default function MediaQueue() {
 	const [tracks, setTracks] = useState<Track[]>([]);
 
 	const {
-		noOfTracks,
 		currentPage,
 		limit,
 		orderBy,
 		sortBy,
 		hydrated,
-		setLimit,
 		setNoOfTracks,
 		setOrderBy,
-		setPage,
 		setSortBy,
 	} = useQueueStore();
 
-	const getTracks = async (): Promise<
+	const getTracks = useCallback(async (): Promise<
 		ApiResponse<{ streams: Track[]; totalStreams: number }>
 	> => {
 		console.log(SortOptions[sortBy], orderBy);
@@ -73,7 +70,7 @@ export default function MediaQueue() {
 		);
 
 		return tracks;
-	};
+	}, [currentPage, limit, orderBy, sortBy]);
 
 	const handleVote = async (isVoted: boolean, trackId: string) => {
 		const voteType = isVoted ? "downvotes" : "upvotes";
@@ -92,7 +89,6 @@ export default function MediaQueue() {
 			toast.error(vote.error || "Failed to upvote");
 		}
 	};
-
 	useEffect(() => {
 		getTracks().then(
 			(resp: ApiResponse<{ streams: Track[]; totalStreams: number }>) => {
@@ -105,7 +101,7 @@ export default function MediaQueue() {
 				}
 			}
 		);
-	}, [sortBy, orderBy]);
+	}, [getTracks, setNoOfTracks]);
 
 	if (!hydrated) {
 		return (
@@ -186,11 +182,14 @@ export default function MediaQueue() {
 										key={track.id}
 										className="flex items-center space-x-3 p-2 rounded-md hover:bg-secondary/50 transition-colors"
 									>
-										<div className="w-12 h-12 rounded-md overflow-hidden cursor-pointer">
-											<img
+										<div className="size-12 flex-shrink-0">
+											<Image
 												src={track.thumbnail}
 												alt={track.title}
 												className="object-contain w-full h-full"
+												width={48}
+												height={48}
+												loading="lazy"
 											/>
 										</div>
 										<div className="flex-1">

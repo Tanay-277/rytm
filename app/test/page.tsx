@@ -1,18 +1,14 @@
 "use client";
 import Appbar from "@/components/blocks/Appbar";
-import AudioControl from "@/components/blocks/AudioControl";
 import BetterThemeToggle from "@/components/blocks/BetterThemeToggle";
 import MediaQueue from "@/components/blocks/MediaQueue";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Share } from "lucide-react";
-import { useState } from "react";
 import LiteYouTubeEmbed from "react-lite-youtube-embed";
-import { YouTubeEmbed } from "@next/third-parties/google";
 
 export default function Test() {
-	const [volume, setVolume] = useState<[number]>([45]);
 	return (
 		<main className="flex flex-col h-screen">
 			<Appbar />

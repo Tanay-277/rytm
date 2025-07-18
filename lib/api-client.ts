@@ -1,14 +1,15 @@
 import axios, {
     AxiosInstance,
     AxiosRequestConfig,
-    AxiosResponse,
-    CancelToken
 } from "axios";
 import { toast } from "sonner";
 
 export type ApiResponse<T> =
     | { success: true; data: T }
     | { success: false; error: string };
+
+// Define a generic type for request data
+export type RequestData = Record<string, unknown>;
 
 class ApiClient {
     private baseURL = "/api";
@@ -29,7 +30,7 @@ class ApiClient {
 
     async post<T>(
         endpoint: string,
-        data: any,
+        data: RequestData,
         config: AxiosRequestConfig = {}
     ): Promise<ApiResponse<T>> {
         try {
@@ -60,7 +61,7 @@ class ApiClient {
         }
     }
 
-    private handleError(error: any): string {
+    private handleError(error: unknown): string {
         let message = "Something went wrong. Please try again.";
 
         if (axios.isAxiosError(error)) {

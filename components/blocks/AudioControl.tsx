@@ -3,7 +3,7 @@
 import { Volume, Volume1, Volume2, VolumeOff } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { Slider } from "../ui/slider";
-import { useState, useRef, useCallback, memo, useEffect } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { useAudioStore } from "@/store/audioStore";
 

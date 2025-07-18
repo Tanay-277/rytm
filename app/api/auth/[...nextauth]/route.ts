@@ -1,15 +1,29 @@
 import { prisma } from "@/lib/db";
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-import { PrismaAdapter } from "@auth/prisma-adapter"; // ✅ Correct package for NextAuth v4+
+import { PrismaAdapter } from "@auth/prisma-adapter";
 import type { AuthOptions } from "next-auth";
 
-export const authOptions: AuthOptions = {
+const authOptions: AuthOptions = {
 	adapter: PrismaAdapter(prisma),
 	providers: [
 		GoogleProvider({
 			clientId: process.env.GOOGLE_CLIENT_ID!,
 			clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+			authorization: {
+				params: {
+					scope: "openid email profile",
+					prompt: "select_account",
+				},
+			},
+			profile(profile) {
+				return {
+					id: profile.sub,
+					name: profile.name || profile.given_name || profile.email?.split('@')[0] || 'Unknown User',
+					email: profile.email,
+					image: profile.picture || `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.name || profile.email || 'User')}&background=0D8ABC&color=fff`,
+				};
+			},
 		}),
 	],
 	session: {
@@ -33,10 +47,29 @@ export const authOptions: AuthOptions = {
 			}
 			return session;
 		},
-		async signIn({ user, account, profile }) {
-			if (!user.email || !user.name || !user.image) {
-				console.log("SignIn blocked: missing fields");
+		async signIn({ user, account }) {
+			// console.log("SignIn attempt:", {
+			// 	userEmail: user.email,
+			// 	userName: user.name,
+			// 	userImage: user.image,
+			// 	provider: account?.provider,
+			// });
+
+			// Only require email - provide fallbacks for missing fields
+			if (!user.email) {
+				console.log("SignIn blocked: missing email");
 				return false;
+			}
+
+			// Provide fallbacks for missing fields
+			if (!user.name) {
+				user.name = user.email.split('@')[0] || 'Unknown User';
+				console.log("Using fallback name:", user.name);
+			}
+
+			if (!user.image) {
+				user.image = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=0D8ABC&color=fff`;
+				console.log("Using fallback image:", user.image);
 			}
 
 			const existingUser = await prisma.user.findUnique({
@@ -73,6 +106,7 @@ export const authOptions: AuthOptions = {
 				}
 			}
 
+			console.log("SignIn successful for:", user.email);
 			return true;
 		},
 	},

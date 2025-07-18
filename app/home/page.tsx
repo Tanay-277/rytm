@@ -6,10 +6,8 @@ import Player from "@/components/blocks/Player";
 import StreamBar from "@/components/blocks/StreamBar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Share } from "lucide-react";
 import { getServerSession } from "next-auth";
-import Image from "next/image";
 import { redirect } from "next/navigation";
 
 export default async function Home() {

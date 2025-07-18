@@ -3,12 +3,11 @@ import React, { useState } from "react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { toast } from "sonner";
-import api, { type ApiResponse } from "@/lib/api-client";
+import api from "@/lib/api-client";
 import { Stream, StreamType } from "@prisma/client";
 import { Toaster } from "../ui/sonner";
 import { Loader2Icon } from "lucide-react";
-import { detectMedia, getMediaDetails } from "@/lib/helpers";
-import { AnimatePresence, motion } from "motion/react";
+import { detectMedia } from "@/lib/helpers";
 
 const StreamBar = () => {
 	const [newStream, setNewStream] = useState<string>("");

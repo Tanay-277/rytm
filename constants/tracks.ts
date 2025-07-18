@@ -1,6 +1,4 @@
-import { Track } from "@/components/blocks/MediaQueue";
-
-export const tracks: Track[] = [
+export const tracks = [
 	{
 		id: "1",
 		cover: "/assets/thumb/bg-1.png",

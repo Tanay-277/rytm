@@ -1,14 +1,9 @@
 "use client";
-import LiteYouTubeEmbed from "react-lite-youtube-embed";
-import { useAudioStore } from "@/store/audioStore";
-import type { imgResolution } from "react-lite-youtube-embed";
-import { useMediaQuery } from "react-responsive";
-import { useEffect, useState } from "react";
 import Image from "next/image";
 
 export default function Player() {
-	const { volume } = useAudioStore();
-	const [posterSize, setPosterSize] = useState<imgResolution>("maxresdefault");
+	// const { volume } = useAudioStore();
+	// const [posterSize, setPosterSize] = useState<imgResolution>("maxresdefault");
 
 	// const isSmallDevice = useMediaQuery({
 	// 	query: "only screen and (max-width : 768px)",
@@ -34,7 +29,7 @@ export default function Player() {
 				className="object-cover"
 				fill
 				sizes="(max-width: 768px) 100vw, (max-width: 1200px) 75vw"
-				priority
+				priority	about=""
 			/>
 			{/* <LiteYouTubeEmbed
 				id="IBkT4Yww7zk"
